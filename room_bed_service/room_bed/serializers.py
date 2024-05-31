@@ -9,7 +9,7 @@ class TypeSerializer(serializers.ModelSerializer):
 
 
 class RoomSerializer(serializers.ModelSerializer):
-    type = TypeSerializer(read_only=True)
+    type = serializers.PrimaryKeyRelatedField(queryset=Type.objects.all(), required=False)
 
     class Meta:
         model = Room
@@ -17,7 +17,7 @@ class RoomSerializer(serializers.ModelSerializer):
 
 
 class BedSerializer(serializers.ModelSerializer):
-    room = RoomSerializer(read_only=True)
+    room = serializers.PrimaryKeyRelatedField(queryset=Room.objects.all(), required=False)
 
     class Meta:
         model = Bed
