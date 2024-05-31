@@ -6,7 +6,6 @@ class InsuranceInformation(models.Model):
     code = models.CharField(max_length=255)
     date_issue = models.DateField()
     expire_issue = models.DateField()
-    patient_record_id = models.IntegerField()
 
     def __str__(self):
         return f"Insurance {self.code} for Patient Record {self.patient_record_id}"
