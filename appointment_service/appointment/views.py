@@ -11,9 +11,9 @@ from django.views.decorators.csrf import csrf_exempt
 
 
 # Utility function to fetch data from another service
-def fetch_data_from_service(url, token):
+def fetch_data_from_service(url):
     headers = {
-        'Authorization': f'Bearer {token}'
+
     }
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
@@ -51,51 +51,70 @@ def jwt_required():
 
 
 class AppointmentListView(APIView):
-    @method_decorator(jwt_required())
-    def get(self, request, user_id):
+    # @method_decorator(jwt_required())
+    def get(self, request):
         appointments = Appointment.objects.all()
         serializer = AppointmentSerializer(appointments, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class AppointmentDetailView(APIView):
-    @method_decorator(jwt_required())
-    def get(self, request, user_id, appointment_id):
+    # @method_decorator(jwt_required())
+    def get(self, request, appointment_id):
         try:
             appointment = Appointment.objects.get(id=appointment_id)
+
         except Appointment.DoesNotExist:
             return Response({'error': 'Appointment not found'}, status=status.HTTP_404_NOT_FOUND)
         serializer = AppointmentSerializer(appointment)
-        return Response(serializer.data, status=status.HTTP_200_OK)
-
-
-class AppointmentCreateView(APIView):
-    @method_decorator(jwt_required())
-    @csrf_exempt
-    def post(self, request, user_id):
-        data = request.data
-        doctor_id = data.get('doctor_id')
-        patient_id = data.get('patient_id')
-        token = request.headers.get('Authorization').split()[1]
-
-        # Fetch doctor details
-        doctor_url = f'http://localhost:8001/doctors/{doctor_id}/'
-        doctor_data = fetch_data_from_service(doctor_url, token)
+        doctor_url = f'http://localhost:8002/doctor/api/doctors/{appointment.doctor_id}/'
+        doctor_data = fetch_data_from_service(doctor_url)
         if not doctor_data:
             return Response({'error': 'Doctor not found'}, status=status.HTTP_404_NOT_FOUND)
 
-        # Fetch patient details
-        patient_url = f'http://localhost:8002/patients/{patient_id}/'
-        patient_data = fetch_data_from_service(patient_url, token)
+        patient_url = f'http://localhost:8003/patients/api/patients/{appointment.patient_id}/'
+        patient_data = fetch_data_from_service(patient_url)
         if not patient_data:
             return Response({'error': 'Patient not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        print(doctor_data)
+        print(patient_data)
+        response_data = serializer.data
+        response_data['doctor'] = doctor_data
+        response_data['patient'] = patient_data
+        return Response(response_data, status=status.HTTP_200_OK)
+
+
+class AppointmentCreateView(APIView):
+    # @method_decorator(jwt_required())
+    # @csrf_exempt
+    def post(self, request):
+        data = request.data
+        doctor_id = data.get('doctor_id')
+        patient_id = data.get('patient_id')
+        # token = request.headers.get('Authorization').split()[1]
+
+        # Fetch doctor details
+        # doctor_url = f'http://localhost:8001/doctors/{doctor_id}/'
+        # doctor_data = fetch_data_from_service(doctor_url, token)
+        # if not doctor_data:
+        #     return Response({'error': 'Doctor not found'}, status=status.HTTP_404_NOT_FOUND)
+
+        # Fetch patient details
+        # patient_url = f'http://localhost:8002/patients/{patient_id}/'
+        # patient_data = fetch_data_from_service(patient_url, token)
+        # if not patient_data:
+        #     return Response({'error': 'Patient not found'}, status=status.HTTP_404_NOT_FOUND)
 
         # Create appointment
         appointment_data = {
             'doctor_id': doctor_id,
             'patient_id': patient_id,
             'appointment_date': data.get('appointment_date'),
-            'reason': data.get('reason')
+            'reason': data.get('reason'),
+            'hour': data.get('hour'),
+            'visit_date': data.get('visit_date'),
+            'room_id': data.get('room_id')
         }
         serializer = AppointmentSerializer(data=appointment_data)
         if serializer.is_valid():
@@ -105,9 +124,9 @@ class AppointmentCreateView(APIView):
 
 
 class AppointmentUpdateView(APIView):
-    @method_decorator(jwt_required())
-    @csrf_exempt
-    def put(self, request, user_id, appointment_id):
+    # @method_decorator(jwt_required())
+    # @csrf_exempt
+    def put(self, request, appointment_id):
         try:
             appointment = Appointment.objects.get(id=appointment_id)
         except Appointment.DoesNotExist:
@@ -116,19 +135,19 @@ class AppointmentUpdateView(APIView):
         data = request.data
         doctor_id = data.get('doctor_id')
         patient_id = data.get('patient_id')
-        token = request.headers.get('Authorization').split()[1]
+        # token = request.headers.get('Authorization').split()[1]
 
         # Fetch doctor details
-        doctor_url = f'http://localhost:8001/doctors/{doctor_id}/'
-        doctor_data = fetch_data_from_service(doctor_url, token)
-        if not doctor_data:
-            return Response({'error': 'Doctor not found'}, status=status.HTTP_404_NOT_FOUND)
+        # doctor_url = f'http://localhost:8001/doctors/{doctor_id}/'
+        # doctor_data = fetch_data_from_service(doctor_url, token)
+        # if not doctor_data:
+        #     return Response({'error': 'Doctor not found'}, status=status.HTTP_404_NOT_FOUND)
 
         # Fetch patient details
-        patient_url = f'http://localhost:8002/patients/{patient_id}/'
-        patient_data = fetch_data_from_service(patient_url, token)
-        if not patient_data:
-            return Response({'error': 'Patient not found'}, status=status.HTTP_404_NOT_FOUND)
+        # patient_url = f'http://localhost:8002/patients/{patient_id}/'
+        # patient_data = fetch_data_from_service(patient_url, token)
+        # if not patient_data:
+        #     return Response({'error': 'Patient not found'}, status=status.HTTP_404_NOT_FOUND)
 
         # Update appointment
         appointment_data = {
@@ -145,9 +164,9 @@ class AppointmentUpdateView(APIView):
 
 
 class AppointmentDeleteView(APIView):
-    @method_decorator(jwt_required())
-    @csrf_exempt
-    def delete(self, request, user_id, appointment_id):
+    # @method_decorator(jwt_required())
+    # @csrf_exempt
+    def delete(self, request, appointment_id):
         try:
             appointment = Appointment.objects.get(id=appointment_id)
         except Appointment.DoesNotExist:

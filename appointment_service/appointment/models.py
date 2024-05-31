@@ -5,7 +5,6 @@ from django.db import models
 
 
 class Appointment(models.Model):
-    id = models.AutoField(primary_key=True)
     patient_id = models.IntegerField()
     hour = models.IntegerField()
     visit_date = models.DateField()
