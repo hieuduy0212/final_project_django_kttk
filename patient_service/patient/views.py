@@ -51,16 +51,16 @@ def jwt_required():
 
 
 class PatientListView(APIView):
-    @method_decorator(jwt_required())
-    def get(self, request, user_id):
+    # @method_decorator(jwt_required())
+    def get(self, request):
         patients = Patient.objects.all()
         serializer = PatientSerializer(patients, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class PatientDetailView(APIView):
-    @method_decorator(jwt_required())
-    def get(self, request, user_id, patient_id):
+    # @method_decorator(jwt_required())
+    def get(self, request, patient_id):
         try:
             patient = Patient.objects.get(id=patient_id)
         except Patient.DoesNotExist:
@@ -70,82 +70,52 @@ class PatientDetailView(APIView):
 
 
 class PatientCreateView(APIView):
-    @method_decorator(jwt_required())
-    @csrf_exempt
-    def post(self, request, user_id):
+    # @method_decorator(jwt_required())
+    # @csrf_exempt
+    def post(self, request):
         data = request.data
-
-        # Fetch patient record ID from another service
-        token = request.headers.get('Authorization').split()[1]
-        patient_record_url = f'http://localhost:8003/patient_records/{data.get("patient_id")}/'
-        patient_record_data = fetch_data_from_service(patient_record_url, token)
-        if not patient_record_data:
-            return Response({'error': 'Patient record not found'}, status=status.HTTP_404_NOT_FOUND)
-
         # Create FullName
         full_name_data = data.get('full_name')
         full_name_serializer = FullNameSerializer(data=full_name_data)
-        if full_name_serializer.is_valid():
-            full_name = full_name_serializer.save()
-        else:
-            return Response(full_name_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        full_name_serializer.is_valid(raise_exception=True)
+        full_name = full_name_serializer.save()
 
         # Create Address
         address_data = data.get('address')
         address_serializer = AddressSerializer(data=address_data)
-        if address_serializer.is_valid():
-            address = address_serializer.save()
-        else:
-            full_name.delete()
-            return Response(address_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        address_serializer.is_valid(raise_exception=True)
+        address = address_serializer.save()
 
         # Create RelativeInfo
         relative_info_data = data.get('relative_info')
         relative_info_serializer = RelativeInfoSerializer(data=relative_info_data)
-        if relative_info_serializer.is_valid():
-            relative_info = relative_info_serializer.save()
-        else:
-            full_name.delete()
-            address.delete()
-            return Response(relative_info_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        relative_info_serializer.is_valid(raise_exception=True)
+        relative_info = relative_info_serializer.save()
 
         # Create Patient
         patient_data = {
-            'patient_record_id': patient_record_data.get('id'),
             'tel': data.get('tel'),
             'relative_info': relative_info.id,
             'address': address.id,
             'full_name': full_name.id
         }
         patient_serializer = PatientSerializer(data=patient_data)
-        if patient_serializer.is_valid():
-            patient_serializer.save()
-            return Response(patient_serializer.data, status=status.HTTP_201_CREATED)
-        else:
-            full_name.delete()
-            address.delete()
-            relative_info.delete()
-            return Response(patient_serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+        patient_serializer.is_valid(raise_exception=True)
+        patient = patient_serializer.save()
+
+        return Response(patient_serializer.data, status=status.HTTP_201_CREATED)
 
 
 class PatientUpdateView(APIView):
-    @method_decorator(jwt_required())
-    @csrf_exempt
-    def put(self, request, user_id, patient_id):
+    # @method_decorator(jwt_required())
+    # @csrf_exempt
+    def put(self, request, patient_id):
         try:
             patient = Patient.objects.get(id=patient_id)
         except Patient.DoesNotExist:
             return Response({'error': 'Patient not found'}, status=status.HTTP_404_NOT_FOUND)
 
         data = request.data
-
-        # Fetch patient record ID from another service
-        token = request.headers.get('Authorization').split()[1]
-        patient_record_url = f'http://localhost:8003/patient_records/{data.get("patient_id")}/'
-        patient_record_data = fetch_data_from_service(patient_record_url, token)
-        if not patient_record_data:
-            return Response({'error': 'Patient record not found'}, status=status.HTTP_404_NOT_FOUND)
-
         # Update FullName
         full_name_data = data.get('full_name')
         full_name_serializer = FullNameSerializer(patient.full_name, data=full_name_data, partial=True)
@@ -172,7 +142,6 @@ class PatientUpdateView(APIView):
 
         # Update Patient
         patient_data = {
-            'patient_record_id': patient_record_data.get('id'),
             'tel': data.get('tel'),
             'relative_info': patient.relative_info.id,
             'address': patient.address.id,
@@ -186,9 +155,9 @@ class PatientUpdateView(APIView):
 
 
 class PatientDeleteView(APIView):
-    @method_decorator(jwt_required())
-    @csrf_exempt
-    def delete(self, request, user_id, patient_id):
+    # @method_decorator(jwt_required())
+    # @csrf_exempt
+    def delete(self, request, patient_id):
         try:
             patient = Patient.objects.get(id=patient_id)
         except Patient.DoesNotExist:
