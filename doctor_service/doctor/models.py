@@ -1,22 +1,27 @@
 from django.db import models
 
+
 class Specialist(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True)
+
 
 class Address(models.Model):
     no_house = models.CharField(max_length=50)
     street = models.CharField(max_length=100)
     city = models.CharField(max_length=100)
 
+
 class Department(models.Model):
     name = models.CharField(max_length=100)
     description = models.TextField(null=True)
+
 
 class FullName(models.Model):
     first_name = models.CharField(max_length=50)
     mid_name = models.CharField(max_length=50, blank=True, null=True)
     last_name = models.CharField(max_length=50)
+
 
 class Doctor(models.Model):
     gender = models.CharField(max_length=10)
