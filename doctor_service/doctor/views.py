@@ -4,6 +4,7 @@ from rest_framework import status
 from .models import Specialist, Doctor, Department
 from .serializers import SpecialistSerializer, DoctorSerializer, DepartmentSerializer
 
+
 # Views for Specialist
 class SpecialistList(APIView):
     def get(self, request):
@@ -18,6 +19,7 @@ class SpecialistList(APIView):
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+
 class DepartmentList(APIView):
     def get(self, request):
         departments = Department.objects.all()
@@ -30,6 +32,7 @@ class DepartmentList(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class SpecialistDetail(APIView):
     def get_object(self, pk):
@@ -96,6 +99,7 @@ class DoctorList(APIView):
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 class DoctorDetail(APIView):
     def get_object(self, pk):
