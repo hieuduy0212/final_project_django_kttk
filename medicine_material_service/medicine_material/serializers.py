@@ -15,8 +15,8 @@ class MedicineSupplierSerializer(serializers.ModelSerializer):
 
 
 class MedicineSerializer(serializers.ModelSerializer):
-    category = MedicineCategorySerializer(read_only=True)
-    supplier = MedicineSupplierSerializer(read_only=True)
+    category = serializers.PrimaryKeyRelatedField(queryset=MedicineCategory.objects.all(), required=False)
+    supplier = serializers.PrimaryKeyRelatedField(queryset=MedicineSupplier.objects.all(), required=False)
 
     class Meta:
         model = Medicine
@@ -36,8 +36,8 @@ class MaterialSupplierSerializer(serializers.ModelSerializer):
 
 
 class MaterialSerializer(serializers.ModelSerializer):
-    type = MaterialTypeSerializer(read_only=True)
-    supplier = MaterialSupplierSerializer(read_only=True)
+    type = serializers.PrimaryKeyRelatedField(queryset=MaterialType.objects.all(), required=False)
+    supplier = serializers.PrimaryKeyRelatedField(queryset=MaterialSupplier.objects.all(), required=False)
 
     class Meta:
         model = Material

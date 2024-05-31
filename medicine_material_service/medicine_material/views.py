@@ -53,39 +53,48 @@ def jwt_required():
 
 # Medicine Supplier Views
 class MedicineSupplierCreateView(APIView):
-    @method_decorator(jwt_required())
-    @csrf_exempt
-    def post(self, request, user_id):
+    # @method_decorator(jwt_required())
+    # @csrf_exempt
+    def post(self, request):
         serializer = MedicineSupplierSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def get(self, request):
+        suppliers = MedicineSupplier.objects.all()
+        serializer = MedicineSupplierSerializer(suppliers, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
 
 # Medicine Category Views
 class MedicineCategoryCreateView(APIView):
-    @method_decorator(jwt_required())
-    @csrf_exempt
-    def post(self, request, user_id):
+    # @method_decorator(jwt_required())
+    # @csrf_exempt
+    def post(self, request):
         serializer = MedicineCategorySerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
             return Response(serializer.data, status=status.HTTP_201_CREATED)
         return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+    def get(self, request):
+        cates = MedicineCategory.objects.all()
+        serializer = MedicineCategorySerializer(cates, many=True)
+        return Response(serializer.data, status=status.HTTP_200_OK)
+
 
 # Medicine Views
 class MedicineListView(APIView):
-    @method_decorator(jwt_required())
-    def get(self, request, user_id):
+    # @method_decorator(jwt_required())
+    def get(self, request):
         medicines = Medicine.objects.all()
         serializer = MedicineSerializer(medicines, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class MedicineDetailView(APIView):
-    @method_decorator(jwt_required())
+    # @method_decorator(jwt_required())
     def get(self, request, user_id, medicine_id):
         try:
             medicine = Medicine.objects.get(id=medicine_id)
@@ -96,9 +105,9 @@ class MedicineDetailView(APIView):
 
 
 class MedicineCreateView(APIView):
-    @method_decorator(jwt_required())
-    @csrf_exempt
-    def post(self, request, user_id):
+    # @method_decorator(jwt_required())
+    # @csrf_exempt
+    def post(self, request):
         serializer = MedicineSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -107,8 +116,8 @@ class MedicineCreateView(APIView):
 
 
 class MedicineUpdateView(APIView):
-    @method_decorator(jwt_required())
-    @csrf_exempt
+    # @method_decorator(jwt_required())
+    # @csrf_exempt
     def put(self, request, user_id, medicine_id):
         try:
             medicine = Medicine.objects.get(id=medicine_id)
@@ -122,8 +131,8 @@ class MedicineUpdateView(APIView):
 
 
 class MedicineDeleteView(APIView):
-    @method_decorator(jwt_required())
-    @csrf_exempt
+    # @method_decorator(jwt_required())
+    # @csrf_exempt
     def delete(self, request, user_id, medicine_id):
         try:
             medicine = Medicine.objects.get(id=medicine_id)
@@ -135,15 +144,15 @@ class MedicineDeleteView(APIView):
 
 # Material Views
 class MaterialListView(APIView):
-    @method_decorator(jwt_required())
-    def get(self, request, user_id):
+    # @method_decorator(jwt_required())
+    def get(self, request):
         materials = Material.objects.all()
         serializer = MaterialSerializer(materials, many=True)
         return Response(serializer.data, status=status.HTTP_200_OK)
 
 
 class MaterialDetailView(APIView):
-    @method_decorator(jwt_required())
+    # @method_decorator(jwt_required())
     def get(self, request, user_id, material_id):
         try:
             material = Material.objects.get(id=material_id)
@@ -154,9 +163,9 @@ class MaterialDetailView(APIView):
 
 
 class MaterialCreateView(APIView):
-    @method_decorator(jwt_required())
-    @csrf_exempt
-    def post(self, request, user_id):
+    # @method_decorator(jwt_required())
+    # @csrf_exempt
+    def post(self, request):
         serializer = MaterialSerializer(data=request.data)
         if serializer.is_valid():
             serializer.save()
@@ -165,8 +174,8 @@ class MaterialCreateView(APIView):
 
 
 class MaterialUpdateView(APIView):
-    @method_decorator(jwt_required())
-    @csrf_exempt
+    # @method_decorator(jwt_required())
+    # @csrf_exempt
     def put(self, request, user_id, material_id):
         try:
             material = Material.objects.get(id=material_id)
@@ -180,8 +189,8 @@ class MaterialUpdateView(APIView):
 
 
 class MaterialDeleteView(APIView):
-    @method_decorator(jwt_required())
-    @csrf_exempt
+    # @method_decorator(jwt_required())
+    # @csrf_exempt
     def delete(self, request, user_id, material_id):
         try:
             material = Material.objects.get(id=material_id)
