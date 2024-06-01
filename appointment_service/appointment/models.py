@@ -8,7 +8,7 @@ class Appointment(models.Model):
     patient_id = models.IntegerField()
     hour = models.IntegerField()
     visit_date = models.DateField()
-    note = models.TextField(blank=True, null=True)
+    reason = models.TextField(blank=True, null=True)
     doctor_id = models.IntegerField()
     room_id = models.IntegerField()
 

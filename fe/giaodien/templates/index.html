@@ -1,0 +1,65 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+<!-- Header-->
+<header class="bg-dark py-5">
+  <div class="container px-4 px-lg-5 my-5">
+    <div class="text-center text-white">
+      <h1 class="display-4 fw-bolder">Chào mừng</h1>
+      <p class="lead fw-normal text-white-50 mb-0">
+        đến với hệ thống quản lý bệnh viện
+      </p>
+    </div>
+  </div>
+</header>
+<!-- Section-->
+<section class="row">
+  <div class="container mt-5">
+    <h1 class="text-center">Hệ thống quản lý bệnh viện</h1>
+    <div class="row mt-4">
+        <div class="col-md-3">
+            <div class="dropdown">
+              <button class="btn btn-primary dropdown-toggle" type="button"
+                id="btn-appointment-man" data-bs-toggle="dropdown" aria-expanded="false">
+                Quản lý bệnh nhân
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="btn-appointment-man">
+                <li><a class="dropdown-item" href="http://localhost:8000/add-patient">Thêm mới</a></li>
+                <li><button onclick="showErrorFun()" class="dropdown-item">Xem danh sách</button></li>
+              </ul>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <a href="#" class="btn btn-secondary btn-block">Quản lý bác sĩ</a>
+        </div>
+        <div class="col-md-3">
+            <a href="#" class="btn btn-success btn-block">Quản lý phòng khám và giường bệnh</a>
+        </div>
+        <div class="col-md-3">
+            <button onclick="showErrorFun()" class="btn btn-danger btn-block">Quản lý nhân viên</button>
+        </div>
+    </div>
+    <div class="row mt-3">
+        <div class="col-md-3">
+            <div class="dropdown">
+              <button class="btn btn-secondary dropdown-toggle" type="button"
+                id="btn-appointment-man" data-bs-toggle="dropdown" aria-expanded="false">
+                Lịch khám
+              </button>
+              <ul class="dropdown-menu" aria-labelledby="btn-appointment-man">
+                <li><a class="dropdown-item" href="http://localhost:8000/create-appointment">Đặt lịch</a></li>
+                <li><a class="dropdown-item" href="http://localhost:8000/list-appointment">Xem danh sách</a></li>
+              </ul>
+            </div>
+        </div>
+        <div class="col-md-3">
+            <a href="http://localhost:8005/admin" target="_blank" class="btn btn-info btn-block">Quản lý thuốc</a>
+        </div>
+    </div>
+</div>
+
+</section>
+<script>
+  function showErrorFun(){
+    swal("Opps...!", "Chức năng đang phát triển!", "error");
+  }
+</script>
+{% endblock %}

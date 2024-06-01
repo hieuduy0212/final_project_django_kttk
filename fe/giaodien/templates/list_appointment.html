@@ -1,0 +1,24 @@
+{% extends 'base.html' %} {% load static %} {% block content %}
+
+<div class="container mt-5">
+    <h1 class="text-center">Danh Sách Cuộc Hẹn</h1>
+    <table class="table table-striped mt-4" id="appointmentTable">
+        <thead>
+            <tr>
+                <th scope="col">ID</th>
+                <th scope="col">Bệnh Nhân</th>
+                <th scope="col">Bác Sĩ</th>
+                <th scope="col">Giờ</th>
+                <th scope="col">Ngày Khám</th>
+                <th scope="col">Phòng</th>
+                <th scope="col">Ghi Chú</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Rows will be added dynamically by JavaScript -->
+        </tbody>
+    </table>
+</div>
+
+<script src="{% static 'js/list_appointment.js' %}"></script>
+{% endblock %}

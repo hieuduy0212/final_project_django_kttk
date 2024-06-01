@@ -55,7 +55,24 @@ class AppointmentListView(APIView):
     def get(self, request):
         appointments = Appointment.objects.all()
         serializer = AppointmentSerializer(appointments, many=True)
-        return Response(serializer.data, status=status.HTTP_200_OK)
+        appointments_data = []
+        for appointment in serializer.data:
+            doctor_url = f"http://localhost:8001/doctor/api/doctors/{appointment['doctor_id']}/"
+            doctor_data = fetch_data_from_service(doctor_url)
+            if not doctor_data:
+                return Response({'error': 'Doctor not found'}, status=status.HTTP_404_NOT_FOUND)
+
+            patient_url = f"http://localhost:8002/patients/api/patients/{appointment['patient_id']}/"
+            patient_data = fetch_data_from_service(patient_url)
+            if not patient_data:
+                return Response({'error': 'Patient not found'}, status=status.HTTP_404_NOT_FOUND)
+
+            response_data = appointment
+            response_data['doctor'] = doctor_data
+            response_data['patient'] = patient_data
+            appointments_data.append(response_data)
+
+        return Response(appointments_data, status=status.HTTP_200_OK)
 
 
 class AppointmentDetailView(APIView):
@@ -76,9 +93,6 @@ class AppointmentDetailView(APIView):
         patient_data = fetch_data_from_service(patient_url)
         if not patient_data:
             return Response({'error': 'Patient not found'}, status=status.HTTP_404_NOT_FOUND)
-
-        print(doctor_data)
-        print(patient_data)
         response_data = serializer.data
         response_data['doctor'] = doctor_data
         response_data['patient'] = patient_data
