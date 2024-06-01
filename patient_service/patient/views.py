@@ -157,7 +157,7 @@ class PatientUpdateView(APIView):
 class PatientDeleteView(APIView):
     # @method_decorator(jwt_required())
     # @csrf_exempt
-    def delete(self, request, patient_id):
+    def get(self, request, patient_id):
         try:
             patient = Patient.objects.get(id=patient_id)
         except Patient.DoesNotExist:

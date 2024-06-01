@@ -73,6 +73,8 @@ TEMPLATES = [
 
 WSGI_APPLICATION = 'appointment_service.wsgi.application'
 
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
 
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
